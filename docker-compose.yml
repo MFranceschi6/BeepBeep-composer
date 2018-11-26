@@ -1,0 +1,65 @@
+version: '3'
+services:
+  dataservice:
+    build: git://github.com/MFranceschi6/BeepBeep-dataservice
+    ports:
+      - "5002:5002"
+    environment:
+      - "CHALLENGES=challenges"
+      - "OBJECTIVES=0"
+      - "PYTHONUNBUFFERED=true"
+    volumes:
+      - "dataservicedb:/tmp/"
+    networks:
+      main:
+        aliases:
+          - dataservice
+
+  challenges:
+    build: git://github.com/MFranceschi6/BeepBeep-challenges
+    ports:
+      - "5003:5003"
+    environment:
+      - "DATASERVICE=dataservice"
+      - "PYTHONUNBUFFERED=true"
+    networks:
+      main:
+        aliases:
+          - challenges
+    volumes:
+      - "challengesdb:/tmp/"
+
+  statistics:
+    build: git://github.com/MFranceschi6/BeepBeep-statistics
+    ports:
+      - "5001:5001"
+    environment:
+      - "DATASERVICE=dataservice"
+      - "PYTHONUNBUFFERED=true"
+    networks:
+      main:
+        aliases:
+          - statistics
+
+  training-objectives:
+    build: git://github.com/MFranceschi6/BeepBeep-training-objectives
+    ports:
+      - "5004:5004"
+    environment:
+      - "DATASERVICE=dataservice"
+      - "PYTHONUNBUFFERED=true"
+    networks:
+      main:
+        aliases:
+          - training-objectives
+    volumes:
+      - "trainingdb:/tmp/"
+
+
+volumes:
+  dataservicedb:
+  challengesdb:
+  trainingdb:
+
+networks:
+  main:
