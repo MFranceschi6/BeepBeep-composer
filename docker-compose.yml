@@ -1,12 +1,20 @@
 version: '3'
 services:
+
+  redis:
+    image: redis
+    networks:
+      main:
+        aliases:
+        - redis
+
   dataservice:
     build: git://github.com/MFranceschi6/BeepBeep-dataservice
     ports:
       - "5002:5002"
     environment:
-      - "CHALLENGES=challenges"
-      - "OBJECTIVES=0"
+      - "CHALLENGES_SERVICE=challenges"
+      - "OBJECTIVES_SERVICE=training-objectives"
       - "PYTHONUNBUFFERED=true"
     volumes:
       - "dataservicedb:/tmp/"
@@ -20,7 +28,7 @@ services:
     ports:
       - "5003:5003"
     environment:
-      - "DATASERVICE=dataservice"
+      - "DATA_SERVICE=dataservice"
       - "PYTHONUNBUFFERED=true"
     networks:
       main:
@@ -34,7 +42,7 @@ services:
     ports:
       - "5001:5001"
     environment:
-      - "DATASERVICE=dataservice"
+      - "DATA_SERVICE=dataservice"
       - "PYTHONUNBUFFERED=true"
     networks:
       main:
@@ -46,7 +54,7 @@ services:
     ports:
       - "5004:5004"
     environment:
-      - "DATASERVICE=dataservice"
+      - "DATA_SERVICE=dataservice"
       - "PYTHONUNBUFFERED=true"
     networks:
       main:
@@ -55,11 +63,40 @@ services:
     volumes:
       - "trainingdb:/tmp/"
 
+  emailer:
+    build: git://github.com/MFranceschi6/BeepBeep-emailer.git
+    depends_on:
+    - redis
+    networks:
+      main:
+    environment:
+    - "WEBSITE_NAME=ButterBeepBeep"
+    - "GROUP_NAME=ButterGroup"
+    - "MAIL_GMAIL_USER=beepbeep.buttergroup@gmail.com"
+    - "MAIL_GMAIL_PASS=butter_group"
+    - "MAIL_REPORT_SUBJECT=Report"
+    - "MAIL_MESSAGE_NO_RUN=norun"
+    - "REDIS=redis"
+    - "DATA_SERVICE=dataservice"
+    - "PYTHONUNBUFFERED=true"
+
+  pump:
+    build: git://github.com/MFranceschi6/BeepBeep-data-pump.git
+    depends_on:
+    - redis
+    networks:
+      main:
+    environment:
+    - "REDIS=redis"
+    - "DATA_SERVICE=dataservice"
+    - "PYTHONUNBUFFERED=true"
+
 
 volumes:
   dataservicedb:
   challengesdb:
   trainingdb:
+  api-gatewaydb:
 
 networks:
   main:
