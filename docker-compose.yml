@@ -16,8 +16,8 @@ services:
       - "PYTHONUNBUFFERED=true"
     volumes:
       - "dataservicedb:/tmp/"
-    ports:
-      - "5002:5002"
+    #ports:
+    # - "5002:5002"
     networks:
       main:
         aliases:
@@ -25,8 +25,8 @@ services:
 
   challenges:
     build: git://github.com/MFranceschi6/BeepBeep-challenges
-    ports:
-      - "5003:5003"
+    #ports:
+    # - "5003:5003"
     environment:
       - "DATA_SERVICE=dataservice"
       - "PYTHONUNBUFFERED=true"
@@ -39,8 +39,8 @@ services:
 
   statistics:
     build: git://github.com/MFranceschi6/BeepBeep-statistics
-    ports:
-      - "5001:5001"
+    #ports:
+    # - "5001:5001"
     environment:
       - "DATA_SERVICE=dataservice"
       - "PYTHONUNBUFFERED=true"
@@ -51,8 +51,8 @@ services:
 
   training-objectives:
     build: git://github.com/MFranceschi6/BeepBeep-training-objectives
-    ports:
-      - "5004:5004"
+    #ports:
+    #  - "5004:5004"
     environment:
       - "DATA_SERVICE=dataservice"
       - "PYTHONUNBUFFERED=true"
@@ -62,23 +62,6 @@ services:
           - training-objectives
     volumes:
       - "trainingdb:/tmp/"
-
-  emailer:
-    build: git://github.com/MFranceschi6/BeepBeep-emailer.git
-    depends_on:
-    - redis
-    networks:
-      main:
-    environment:
-    - "WEBSITE_NAME=ButterBeepBeep"
-    - "GROUP_NAME=ButterGroup"
-    - "MAIL_GMAIL_USER=beepbeep.buttergroup@gmail.com"
-    - "MAIL_GMAIL_PASS=butter_group"
-    - "MAIL_REPORT_SUBJECT=Report"
-    - "MAIL_MESSAGE_NO_RUN=norun"
-    - "REDIS=redis"
-    - "DATA_SERVICE=dataservice"
-    - "PYTHONUNBUFFERED=true"
 
   apigateway:
     depends_on:
@@ -99,6 +82,23 @@ services:
     - "api-gatewaydb:/tmp/"
     networks:
       main:
+
+  emailer:
+    build: git://github.com/MFranceschi6/BeepBeep-emailer.git
+    depends_on:
+    - redis
+    networks:
+      main:
+    environment:
+    - "WEBSITE_NAME=ButterBeepBeep"
+    - "GROUP_NAME=ButterGroup"
+    - "MAIL_GMAIL_USER=beepbeep.buttergroup@gmail.com"
+    - "MAIL_GMAIL_PASS=butter_group"
+    - "MAIL_REPORT_SUBJECT=Report"
+    - "MAIL_MESSAGE_NO_RUN=norun"
+    - "REDIS=redis"
+    - "DATA_SERVICE=dataservice"
+    - "PYTHONUNBUFFERED=true"
 
   pump:
     build: git://github.com/MFranceschi6/BeepBeep-data-pump.git
