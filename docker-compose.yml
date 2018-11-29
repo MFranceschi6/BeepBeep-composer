@@ -10,14 +10,14 @@ services:
 
   dataservice:
     build: git://github.com/MFranceschi6/BeepBeep-dataservice
-    ports:
-      - "5002:5002"
     environment:
       - "CHALLENGES_SERVICE=challenges"
       - "OBJECTIVES_SERVICE=training-objectives"
       - "PYTHONUNBUFFERED=true"
     volumes:
       - "dataservicedb:/tmp/"
+    ports:
+      - "5002:5002"
     networks:
       main:
         aliases:
@@ -79,6 +79,26 @@ services:
     - "REDIS=redis"
     - "DATA_SERVICE=dataservice"
     - "PYTHONUNBUFFERED=true"
+
+  apigateway:
+    depends_on:
+    - redis
+    build:
+      context: git://github.com/MFranceschi6/BeepBeep-API-gateway.git
+    ports:
+    - "5000:5000"
+    environment:
+    - "CHALLENGES_SERVICE=challenges"
+    - "OBJECTIVES_SERVICE=training-objectives"
+    - "DATA_SERVICE=dataservice"
+    - "STRAVA_CLIENT_ID=29639"
+    - "STRAVA_CLIENT_SECRET=a80429b277ed2b47a80ba49cb8f32b7decf8cb87"
+    - "REDIS=redis"
+    - "PYTHONUNBUFFERED=true"
+    volumes:
+    - "api-gatewaydb:/tmp/"
+    networks:
+      main:
 
   pump:
     build: git://github.com/MFranceschi6/BeepBeep-data-pump.git
