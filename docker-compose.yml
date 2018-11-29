@@ -74,6 +74,7 @@ services:
     - "CHALLENGES_SERVICE=challenges"
     - "OBJECTIVES_SERVICE=training-objectives"
     - "DATA_SERVICE=dataservice"
+    - "STATISTICS_SERVICE=statistics"
     - "STRAVA_CLIENT_ID=29639"
     - "STRAVA_CLIENT_SECRET=a80429b277ed2b47a80ba49cb8f32b7decf8cb87"
     - "REDIS=redis"
